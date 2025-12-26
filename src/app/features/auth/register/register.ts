@@ -3,7 +3,8 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { passwordMatchValidator } from '@/app/features/auth/password-match.validator';
 import { LoadingButton } from '@/app/shared/components/ui/loading-button/loading-button';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
+import { AuthService, RegisterPayload } from '@/app/core/auth/auth.service';
 
 @Component({
   selector: 'tots-register',
@@ -16,6 +17,8 @@ export class Register {
   errorMessage = signal<string | null>(null);
 
   fb = inject(FormBuilder);
+  authService = inject(AuthService);
+  router = inject(Router);
 
   registerForm = this.fb.group(
     {
@@ -35,13 +38,27 @@ export class Register {
     this.isLoading.set(true);
     this.errorMessage.set(null);
 
-    try {
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-      console.log('Registered:', this.registerForm.value);
-    } catch (err) {
-      this.errorMessage.set('Registration failed. Please try again.');
-    } finally {
-      this.isLoading.set(false);
-    }
+    const formValue = this.registerForm.getRawValue();
+
+    const payload: RegisterPayload = {
+      first_name: formValue.firstName!,
+      last_name: formValue.lastName!,
+      email: formValue.email!,
+      phone: formValue.phone!,
+      password: formValue.password!,
+      password_confirmation: formValue.confirmPassword!,
+    };
+
+    this.authService.register(payload).subscribe({
+      next: () => {
+        this.isLoading.set(false);
+        this.router.navigate(['/']);
+      },
+      error: (err) => {
+        console.error('Registration error', err);
+        this.isLoading.set(false);
+        this.errorMessage.set('Registration failed. ' + (err.error?.message || 'Please try again.'));
+      },
+    });
   }
 }
