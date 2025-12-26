@@ -1,0 +1,90 @@
+<div class="min-h-screen flex items-center justify-center bg-gray-50 p-6">
+  <div class="max-w-md w-full bg-white rounded-2xl shadow-xl p-8">
+    <h2 class="text-3xl font-bold text-gray-900 text-center mb-8">Create Account</h2>
+
+    @if (errorMessage()) {
+    <div class="bg-red-50 text-red-600 p-3 rounded-lg text-sm mb-4 border border-red-200">
+      {{ errorMessage() }}
+    </div>
+    }
+
+    <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="space-y-4">
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-700">First Name</label>
+          <input
+            formControlName="firstName"
+            autocomplete
+            type="text"
+            class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
+            [class.border-red-500]="
+              registerForm.get('firstName')?.touched && registerForm.get('firstName')?.invalid
+            "
+          />
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700">Last Name</label>
+          <input
+            formControlName="lastName"
+            type="text"
+            class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
+          />
+        </div>
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-gray-700">Email</label>
+        <input
+          formControlName="email"
+          type="email"
+          class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
+        />
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-gray-700">Phone Number</label>
+        <input
+          formControlName="phone"
+          type="tel"
+          class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
+        />
+      </div>
+
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-700">Password</label>
+          <input
+            formControlName="password"
+            type="password"
+            class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
+          />
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700">Confirm</label>
+          <input
+            formControlName="confirmPassword"
+            type="password"
+            class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
+          />
+        </div>
+      </div>
+
+      @if (registerForm.errors?.['passwordMismatch'] &&
+      registerForm.get('confirmPassword')?.touched) {
+      <p class="text-red-500 text-xs mt-1">Passwords do not match</p>
+      }
+
+      <tots-loading-button
+        [disabled]="registerForm.invalid"
+        [isLoading]="isLoading()"
+        loadingLabel="Processing..."
+        label="Create Account"
+        type="submit"
+      ></tots-loading-button>
+    </form>
+    <section class="mt-2 flex justify-center gap-1">
+      <span>Already have an account?</span>
+      <a routerLink="/login" class="text-blue-600 hover:underline cursor-pointer">Sign in</a>
+    </section>
+  </div>
+</div>

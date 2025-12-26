@@ -1,0 +1,18 @@
+<button
+  [disabled]="disabled() || isLoading()"
+  type="submit"
+  class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg transition-all flex items-center justify-center disabled:opacity-50 cursor-pointer"
+>
+  @if (isLoading()) {
+  <div class="flex items-center gap-2">
+    <p-progress-spinner
+      ariaLabel="loading"
+      strokeWidth="4"
+      [style]="{ width: '20px', height: '20px', padding: '0' }"
+    />
+    <span>{{ loadingLabel() }}</span>
+  </div>
+  } @else {
+  <span>{{ label() }}</span>
+  }
+</button>

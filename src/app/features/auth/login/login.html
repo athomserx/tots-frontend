@@ -1,0 +1,43 @@
+<div class="min-h-screen flex items-center justify-center bg-gray-50 p-6">
+  <div class="max-w-sm w-full bg-white rounded-2xl shadow-xl p-8">
+    <h2 class="text-3xl font-bold text-gray-900 text-center mb-8">Welcome Back</h2>
+
+    @if (errorMessage()) {
+    <div class="bg-red-50 text-red-600 p-3 rounded-lg text-sm mb-4">
+      {{ errorMessage() }}
+    </div>
+    }
+
+    <form [formGroup]="loginForm" (ngSubmit)="onLogin()" class="space-y-6">
+      <div>
+        <label class="block text-sm font-medium text-gray-700">Email</label>
+        <input
+          formControlName="email"
+          type="email"
+          class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 outline-none"
+        />
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-gray-700">Password</label>
+        <input
+          formControlName="password"
+          type="password"
+          class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 outline-none"
+        />
+      </div>
+
+      <tots-loading-button
+        [disabled]="loginForm.invalid"
+        [isLoading]="isLoading()"
+        loadingLabel="Processing..."
+        label="Sign In"
+        type="submit"
+      ></tots-loading-button>
+    </form>
+    <section class="mt-2 flex justify-center gap-1">
+      <span>Don't have an account?</span>
+      <a routerLink="/register" class="text-blue-600 hover:underline cursor-pointer">Register</a>
+    </section>
+  </div>
+</div>
