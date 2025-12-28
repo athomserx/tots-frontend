@@ -41,8 +41,7 @@ export class Register {
     const formValue = this.registerForm.getRawValue();
 
     const payload: RegisterPayload = {
-      first_name: formValue.firstName!,
-      last_name: formValue.lastName!,
+      name: `${formValue.firstName!} ${formValue.lastName!}`,
       email: formValue.email!,
       phone: formValue.phone!,
       password: formValue.password!,
@@ -57,7 +56,9 @@ export class Register {
       error: (err) => {
         console.error('Registration error', err);
         this.isLoading.set(false);
-        this.errorMessage.set('Registration failed. ' + (err.error?.message || 'Please try again.'));
+        this.errorMessage.set(
+          'Registration failed. ' + (err.error?.message || 'Please try again.')
+        );
       },
     });
   }
