@@ -1,10 +1,10 @@
 import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
-import { passwordMatchValidator } from '@/app/features/auth/password-match.validator';
-import { LoadingButton } from '@/app/shared/components/ui/loading-button/loading-button';
+import { passwordMatchValidator } from '@core/auth/utils/password-match.validator';
+import { LoadingButton } from '@/app/shared/ui/loading-button/loading-button';
 import { Router, RouterLink } from '@angular/router';
-import { AuthService, RegisterPayload } from '@/app/core/auth/auth.service';
+import { AuthService, RegisterPayload } from '@core/auth/auth-service';
 
 @Component({
   selector: 'tots-register',

@@ -1,8 +1,8 @@
 import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { LoadingButton } from '@/app/shared/components/ui/loading-button/loading-button';
+import { LoadingButton } from '@/app/shared/ui/loading-button/loading-button';
 import { Router, RouterLink } from '@angular/router';
-import { AuthService } from '@/app/core/auth/auth.service';
+import { AuthService } from '@core/auth/auth-service';
 
 @Component({
   selector: 'tots-login',

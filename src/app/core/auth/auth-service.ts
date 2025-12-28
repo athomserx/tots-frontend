@@ -1,9 +1,9 @@
 import { computed, inject, Injectable, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { API_URL } from '@/app/core/providers/api.token';
+import { API_URL } from '@core/api/api.token';
 import { tap } from 'rxjs';
-import { STORAGE_KEYS } from '@/app/shared/constants/storage-constants';
+import { STORAGE_KEYS } from '@core/auth/auth-constants';
 
 export interface User {
   id: number;

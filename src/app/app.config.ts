@@ -11,8 +11,9 @@ import { provideClientHydration, withEventReplay } from '@angular/platform-brows
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { providePrimeNG } from 'primeng/config';
 import Aura from '@primeng/themes/aura';
+import { MessageService } from 'primeng/api';
 import { provideHttpClient, withFetch } from '@angular/common/http';
-import { API_URL } from '@/app/core/providers/api.token';
+import { API_URL } from '@core/api/api.token';
 import { environment } from '@/environments/environment';
 
 export const appConfig: ApplicationConfig = {
@@ -34,5 +35,6 @@ export const appConfig: ApplicationConfig = {
         },
       },
     }),
+    MessageService,
   ],
 };
