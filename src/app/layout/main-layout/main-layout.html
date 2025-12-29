@@ -10,7 +10,8 @@
 
     <nav class="hidden md:flex items-center space-x-8 text-sm font-medium">
       @switch(user()?.roleId) { @case(roles.ADMIN) {
-      <tots-nav-link route="/dashboard" label="Admin" />
+      <tots-nav-link route="/dashboard" label="Espacios" />
+      <tots-nav-link route="/reservations" label="Reservas" />
       } @case(roles.CLIENT) {
       <tots-nav-link route="/dashboard" label="Explorar" />
       <tots-nav-link route="/reservations" label="Mis reservas" />

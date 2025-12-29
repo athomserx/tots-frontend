@@ -34,7 +34,7 @@ export const routes: AppRoutes = [
       {
         path: 'dashboard',
         loadComponent: () =>
-          import('@features/admin/pages/admin/admin').then((m) => m.Admin),
+          import('@features/admin/pages/spaces/spaces').then((m) => m.Spaces),
         canMatch: [roleGuard],
         data: { roles: [UserRole.ADMIN] },
       },
@@ -44,6 +44,13 @@ export const routes: AppRoutes = [
           import('@features/reservations/pages/reservations/reservations').then((m) => m.Reservations),
         canMatch: [roleGuard],
         data: { roles: [UserRole.CLIENT] },
+      },
+      {
+        path: 'reservations',
+        loadComponent: () =>
+          import('@features/admin/pages/reservations/reservations').then((m) => m.Reservations),
+        canMatch: [roleGuard],
+        data: { roles: [UserRole.ADMIN] },
       },
     ],
   },
