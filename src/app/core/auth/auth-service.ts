@@ -1,11 +1,12 @@
 import { computed, inject, Injectable, PLATFORM_ID, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { API_URL } from '@core/api/api.token';
+import { API_URL } from '@core/config/api.token';
 import { tap } from 'rxjs';
 import { STORAGE_KEYS } from '@core/auth/auth-constants';
 import { AuthResponse, LoginPayload, RegisterPayload, User } from './auth-types';
 import { isPlatformBrowser } from '@angular/common';
+import { UserRole } from '@core/models/role.enum';
 
 interface UserJWTClaims {
   sub: string;
@@ -47,27 +48,46 @@ export class AuthService {
   }
 
   logout() {
-    this.clearAuth();
-    this.router.navigate(['/auth/login']);
-
-    return this.http.post(`${this.apiUrl}/logout`, {});
+    this.http.post(`${this.apiUrl}/logout`, {}).subscribe({
+      next: () => {
+        this.clearAuth();
+        this.router.navigate(['/login']);
+      },
+      error: (err) => {
+        console.error('Logout failed', err);
+        this.clearAuth();
+        this.router.navigate(['/login']);
+      }
+    });
   }
 
   getToken(): string | null {
     return this.token();
   }
 
+  getUser(): User | null {
+    return this.currentUser()!;
+  }
+
+  hasSomeRole(roles: UserRole[]): boolean {
+    const roleId = this.getUser()?.roleId;
+
+    return roles.some((role) => Number(roleId) === Number(role));
+  }
+
   private handleAuthSuccess(response: AuthResponse) {
     const token = response.token;
+    this.token.set(token);
     if (this.isBrowser) {
       localStorage.setItem(STORAGE_KEYS.AUTH_TOKEN, token);
+      localStorage.setItem(STORAGE_KEYS.AUTH_USER, JSON.stringify(this.currentUser()));
     }
-    this.token.set(token);
   }
 
   private clearAuth() {
     if (this.isBrowser) {
       localStorage.removeItem(STORAGE_KEYS.AUTH_TOKEN);
+      localStorage.removeItem(STORAGE_KEYS.AUTH_USER);
     }
     this.token.set(null);
   }

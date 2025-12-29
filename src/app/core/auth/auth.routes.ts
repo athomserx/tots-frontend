@@ -1,7 +1,7 @@
-import { Routes } from '@angular/router';
+import { AppRoutes } from '@/app/app.routes';
 import { guestGuard } from '@core/auth/guards/guest-guard';
 
-export const authRoutes: Routes = [
+export const authRoutes: AppRoutes = [
   {
     path: 'login',
     loadComponent: () => import('./pages/login/login').then((m) => m.Login),
