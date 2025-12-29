@@ -2,7 +2,7 @@ import { Component, inject, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { AuthService } from '@core/auth/auth-service';
 import { User } from '@core/auth/auth-types';
-import { UserRole } from '@core/models/role.enum';
+import { UserRole } from '@core/models/role-model';
 import { NavLink } from './nav-link/nav-link';
 
 @Component({

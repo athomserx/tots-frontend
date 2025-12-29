@@ -3,7 +3,7 @@ import { Route, Routes } from '@angular/router';
 import { authRoutes } from '@core/auth/auth.routes';
 import { authGuard } from '@core/auth/guards/auth-guard';
 import { roleGuard } from '@core/auth/guards/role-guard';
-import { UserRole } from '@core/models/role.enum';
+import { UserRole } from '@core/models/role-model';
 
 export interface RouteData {
   roles?: UserRole[];
@@ -27,28 +27,28 @@ export const routes: AppRoutes = [
       {
         path: 'dashboard',
         loadComponent: () =>
-          import('@features/explore/pages/explore/explore').then((m) => m.Explore),
+          import('@features/client/explore/explore').then((m) => m.Explore),
         canMatch: [roleGuard],
         data: { roles: [UserRole.CLIENT] },
       },
       {
         path: 'dashboard',
         loadComponent: () =>
-          import('@features/admin/pages/spaces/spaces').then((m) => m.Spaces),
+          import('@features/admin/spaces/spaces').then((m) => m.Spaces),
         canMatch: [roleGuard],
         data: { roles: [UserRole.ADMIN] },
       },
       {
-        path: 'reservations',
+        path: 'bookings',
         loadComponent: () =>
-          import('@features/reservations/pages/reservations/reservations').then((m) => m.Reservations),
+          import('@features/client/bookings/bookings').then((m) => m.Bookings),
         canMatch: [roleGuard],
         data: { roles: [UserRole.CLIENT] },
       },
       {
         path: 'reservations',
         loadComponent: () =>
-          import('@features/admin/pages/reservations/reservations').then((m) => m.Reservations),
+          import('@features/admin/reservations/reservations').then((m) => m.Reservations),
         canMatch: [roleGuard],
         data: { roles: [UserRole.ADMIN] },
       },

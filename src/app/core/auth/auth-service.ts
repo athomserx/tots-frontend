@@ -6,7 +6,7 @@ import { tap } from 'rxjs';
 import { STORAGE_KEYS } from '@core/auth/auth-constants';
 import { AuthResponse, LoginPayload, RegisterPayload, User } from './auth-types';
 import { isPlatformBrowser } from '@angular/common';
-import { UserRole } from '@core/models/role.enum';
+import { UserRole } from '@core/models/role-model';
 
 interface UserJWTClaims {
   sub: string;
