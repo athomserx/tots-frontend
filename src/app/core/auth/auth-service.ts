@@ -1,36 +1,19 @@
-import { computed, inject, Injectable, signal } from '@angular/core';
+import { computed, inject, Injectable, PLATFORM_ID, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { API_URL } from '@core/api/api.token';
 import { tap } from 'rxjs';
 import { STORAGE_KEYS } from '@core/auth/auth-constants';
+import { AuthResponse, LoginPayload, RegisterPayload, User } from './auth-types';
+import { isPlatformBrowser } from '@angular/common';
 
-export interface User {
-  id: number;
+interface UserJWTClaims {
+  sub: string;
+  email: string;
   name: string;
-  email: string;
-  email_verified_at?: string;
-  created_at: string;
-  updated_at: string;
-}
-
-export interface LoginPayload {
-  email: string;
-  password: string;
-}
-
-export interface RegisterPayload {
-  name: string;
-  email: string;
+  role: number;
   phone: string;
-  password: string;
-  password_confirmation: string;
-}
-
-export interface AuthResponse {
-  message: string;
-  user: User;
-  token: string;
+  exp: number;
 }
 
 @Injectable({
@@ -41,8 +24,15 @@ export class AuthService {
   private router = inject(Router);
   private apiUrl = inject(API_URL);
 
-  currentUser = signal<User | null>(this.getUserFromStorage());
-  isAuthenticated = computed(() => !!this.currentUser());
+  private platformId = inject(PLATFORM_ID);
+  private isBrowser = isPlatformBrowser(this.platformId);
+
+  private token = signal<string | null>(
+    this.isBrowser ? localStorage.getItem(STORAGE_KEYS.AUTH_TOKEN) : null
+  );
+
+  readonly currentUser = computed(() => this.decodeUserFromToken(this.token()));
+  readonly isAuthenticated = computed(() => !!this.token() && !!this.currentUser());
 
   login(payload: LoginPayload) {
     return this.http
@@ -63,34 +53,48 @@ export class AuthService {
     return this.http.post(`${this.apiUrl}/logout`, {});
   }
 
+  getToken(): string | null {
+    return this.token();
+  }
+
   private handleAuthSuccess(response: AuthResponse) {
-    this.setToken(response.token);
-    this.setUser(response.user);
-  }
-
-  private setToken(token: string) {
-    localStorage.setItem(STORAGE_KEYS.AUTH_TOKEN, token);
-  }
-
-  private setUser(user: User) {
-    localStorage.setItem(STORAGE_KEYS.AUTH_USER, JSON.stringify(user));
-    this.currentUser.set(user);
+    const token = response.token;
+    if (this.isBrowser) {
+      localStorage.setItem(STORAGE_KEYS.AUTH_TOKEN, token);
+    }
+    this.token.set(token);
   }
 
   private clearAuth() {
-    localStorage.removeItem(STORAGE_KEYS.AUTH_TOKEN);
-    localStorage.removeItem(STORAGE_KEYS.AUTH_USER);
-    this.currentUser.set(null);
+    if (this.isBrowser) {
+      localStorage.removeItem(STORAGE_KEYS.AUTH_TOKEN);
+    }
+    this.token.set(null);
   }
 
-  private getUserFromStorage(): User | null {
-    if (typeof localStorage === 'undefined') return null;
-    const userStr = localStorage.getItem(STORAGE_KEYS.AUTH_USER);
-    return userStr ? JSON.parse(userStr) : null;
-  }
+  private decodeUserFromToken(token: string | null): User | null {
+    if (!token) return null;
 
-  getToken(): string | null {
-    if (typeof localStorage === 'undefined') return null;
-    return localStorage.getItem(STORAGE_KEYS.AUTH_TOKEN);
+    try {
+      const payload = token.split('.')[1];
+      const decoded: UserJWTClaims = JSON.parse(atob(payload));
+
+      if (Date.now() >= decoded.exp * 1000) {
+        this.clearAuth();
+        return null;
+      }
+
+      return {
+        id: decoded.sub,
+        email: decoded.email,
+        name: decoded.name,
+        phone: decoded.phone,
+        roleId: decoded.role,
+      };
+    } catch (error) {
+      console.error('Invalid Token', error);
+      this.clearAuth();
+      return null;
+    }
   }
 }

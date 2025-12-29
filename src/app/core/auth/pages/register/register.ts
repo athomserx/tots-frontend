@@ -4,7 +4,8 @@ import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { passwordMatchValidator } from '@core/auth/utils/password-match.validator';
 import { LoadingButton } from '@/app/shared/ui/loading-button/loading-button';
 import { Router, RouterLink } from '@angular/router';
-import { AuthService, RegisterPayload } from '@core/auth/auth-service';
+import { AuthService } from '@core/auth/auth-service';
+import { RegisterPayload } from '@core/auth/auth-types';
 
 @Component({
   selector: 'tots-register',
