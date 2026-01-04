@@ -28,9 +28,7 @@ export class AuthService {
   private platformId = inject(PLATFORM_ID);
   private isBrowser = isPlatformBrowser(this.platformId);
 
-  private token = signal<string | null>(
-    this.isBrowser ? localStorage.getItem(STORAGE_KEYS.AUTH_TOKEN) : null
-  );
+  private token = signal<string | null>(this.getInitialToken());
 
   readonly currentUser = computed(() => this.decodeUserFromToken(this.token()));
   readonly isAuthenticated = computed(() => !!this.token() && !!this.currentUser());
@@ -75,6 +73,26 @@ export class AuthService {
     return roles.some((role) => Number(roleId) === Number(role));
   }
 
+  private getInitialToken(): string | null {
+    if (!this.isBrowser) return null;
+    const token = localStorage.getItem(STORAGE_KEYS.AUTH_TOKEN);
+
+    if (token && this.isTokenExpired(token)) {
+      this.clearLocalStorage();
+      return null;
+    }
+    return token;
+  }
+
+  private isTokenExpired(token: string): boolean {
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      return Date.now() >= payload.exp * 1000;
+    } catch {
+      return true;
+    }
+  }
+
   private handleAuthSuccess(response: AuthResponse) {
     const token = response.token;
     this.token.set(token);
@@ -85,10 +103,7 @@ export class AuthService {
   }
 
   private clearAuth() {
-    if (this.isBrowser) {
-      localStorage.removeItem(STORAGE_KEYS.AUTH_TOKEN);
-      localStorage.removeItem(STORAGE_KEYS.AUTH_USER);
-    }
+    this.clearLocalStorage();
     this.token.set(null);
   }
 
@@ -99,11 +114,6 @@ export class AuthService {
       const payload = token.split('.')[1];
       const decoded: UserJWTClaims = JSON.parse(atob(payload));
 
-      if (Date.now() >= decoded.exp * 1000) {
-        this.clearAuth();
-        return null;
-      }
-
       return {
         id: decoded.sub,
         email: decoded.email,
@@ -112,9 +122,14 @@ export class AuthService {
         roleId: decoded.role,
       };
     } catch (error) {
-      console.error('Invalid Token', error);
-      this.clearAuth();
       return null;
+    }
+  }
+
+  private clearLocalStorage() {
+    if (this.isBrowser) {
+      localStorage.removeItem(STORAGE_KEYS.AUTH_TOKEN);
+      localStorage.removeItem(STORAGE_KEYS.AUTH_USER);
     }
   }
 }
