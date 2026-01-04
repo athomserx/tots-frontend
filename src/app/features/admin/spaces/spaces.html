@@ -1,1 +1,9 @@
-<p>spaces works!</p>
+<mc-table [columns]="tableColumns" [response]="tableResponse" [paginator]="true">
+  <ng-template mcThTemplate="game_number">
+    <h2>Game Test Head # <p-button label="send" /></h2>
+  </ng-template>
+
+  <ng-template mcTdTemplate="status" let-row>
+    <p-button label="Change status" /> {{ row.status }}
+  </ng-template>
+</mc-table>

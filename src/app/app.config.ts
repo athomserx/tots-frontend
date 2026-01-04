@@ -13,7 +13,7 @@ import { providePrimeNG } from 'primeng/config';
 import { MessageService } from 'primeng/api';
 
 import { environment } from '@/environments/environment';
-import { API_URL } from '@core/config/api.token';
+import { API_URL } from '@core/config/api-token';
 import { authInterceptor } from '@core/auth/auth-interceptor';
 import { routes } from './app.routes';
 
