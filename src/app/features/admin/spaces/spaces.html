@@ -1,16 +1,52 @@
 <div class="flex flex-col gap-4">
   <header class="flex justify-between">
     <h1 class="text-2xl font-extrabold">Spaces</h1>
+    <div class="flex">
+      <p-iconField iconPosition="left" class="flex items-center">
+        <p-inputIcon class="pi pi-search h-full" />
+        <input
+          type="text"
+          class="p-inputtext h-full"
+          placeholder="Search by {{ searchFieldsKey.join(', ') }}"
+          (input)="onSearch($event)"
+          #searchInput
+        />
+      </p-iconField>
+
+      <mc-filter-button
+        #McFilterButton
+        storageKey="spaces-table-filter"
+        [config]="filterConfig"
+        (change)="onFilter($event)"
+        class="ml-2"
+      >
+      </mc-filter-button>
+
+      <p-button label="Refresh" icon="pi pi-refresh" (onClick)="loadItems()" styleClass="ml-2" />
+    </div>
     <p-button label="Add space" severity="contrast" />
   </header>
   <section>
     <mc-table [columns]="columns" [response]="items" [paginator]="true">
       <ng-template mcTdTemplate="actions" let-row>
         <div class="flex gap-2">
-          <p-button label="" icon="pi pi-pencil" severity="contrast" (onClick)="handleEdit(row)" />
-          <p-button label="" icon="pi pi-trash" severity="danger" (onClick)="handleDelete(row)" />
+          <p-button
+            label=""
+            icon="pi pi-pencil"
+            severity="contrast"
+            (onClick)="handleEdit(row.id)"
+          />
+          <p-button
+            label=""
+            icon="pi pi-trash"
+            severity="danger"
+            (onClick)="onRemoveConfirm(row.id)"
+          />
         </div>
       </ng-template>
     </mc-table>
   </section>
 </div>
+
+<p-toast></p-toast>
+<p-confirmDialog></p-confirmDialog>

@@ -1,17 +1,41 @@
 import { Component, inject, OnInit, viewChild } from '@angular/core';
 
 import { ButtonModule } from 'primeng/button';
-import { MCTable, MCTdTemplateDirective } from '@mckit/table'
+import { IconFieldModule } from 'primeng/iconfield';
+import { InputTextModule } from 'primeng/inputtext';
+import { InputIconModule } from 'primeng/inputicon';
+import { ToastModule } from 'primeng/toast';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { MessageService, ConfirmationService } from 'primeng/api';
+import { MCTable, MCTdTemplateDirective } from '@mckit/table';
 import { MCOdataTableComponent } from '@mckit/odata';
-import { MCFilter, MCConfigFilter, MCResultFilter, MCFilterOdataConverterService } from '@mckit/filter';
-import { MCColumn, MCListResponse } from '@mckit/core';
+import {
+  MCConfigFilter,
+  MCResultFilter,
+  MCFilterOdataConverterService,
+  MCFilterButton,
+  MCFilter,
+} from '@mckit/filter';
+import { MCColumn } from '@mckit/core';
 
 import { Space } from './space-types';
 import { SpacesService } from './spaces-service';
+import { SPACE_TYPES } from '@core/models/space-description-model';
 
 @Component({
   selector: 'tots-spaces',
-  imports: [MCTable, ButtonModule, MCTdTemplateDirective],
+  imports: [
+    MCTable,
+    ButtonModule,
+    MCTdTemplateDirective,
+    ToastModule,
+    ConfirmDialogModule,
+    MCFilterButton,
+    IconFieldModule,
+    InputTextModule,
+    InputIconModule,
+  ],
+  providers: [MessageService, ConfirmationService],
   templateUrl: './spaces.html',
   styleUrl: './spaces.scss',
 })
@@ -31,7 +55,7 @@ export class Spaces extends MCOdataTableComponent<Space> implements OnInit {
     { field: 'capacity', title: 'Capacity', isShow: true },
     { field: 'createdAt', title: 'Created at', isShow: true },
     { field: 'updatedAt', title: 'Updated at', isShow: true },
-    { field: 'actions', title: 'Actions', isShow: true }
+    { field: 'actions', title: 'Actions', isShow: true },
   ];
 
   override searchFieldsKey: string[] = ['name', 'type', 'description'];
@@ -40,7 +64,7 @@ export class Spaces extends MCOdataTableComponent<Space> implements OnInit {
     this.data.top = 10;
     this.data.orderBy = 'createdAt desc';
     super.ngOnInit();
-    // this.loadFilterConfig();
+    this.loadFilterConfig();
   }
 
   onFilter(filters: Array<MCResultFilter>) {
@@ -49,32 +73,38 @@ export class Spaces extends MCOdataTableComponent<Space> implements OnInit {
     this.data.filters.setPostpend(filterOdata);
     this.data.skip = 0;
     this.loadItems();
+    console.log('filters', filters);
   }
 
-  // loadFilterConfig() {
-  //   this.filterConfig.filters = [
-  //     MCFilter.text({
-  //       title: 'Name',
-  //       key: 'name',
-  //     }),
-  //     MCFilter.multiselect({
-  //       title: 'Type',
-  //       key: 'type',
-  //       options: [
-  //         { label: 'Room', value: 'Room' },
-  //         { label: 'Room with Kitchen', value: 'Room with Kitchen' },
-  //         { label: 'Room with Bathroom', value: 'Room with Bathroom' },
-  //         { label: 'Room with Kitchen and Bathroom', value: 'Room with Kitchen and Bathroom' },
-  //       ],
-  //     }),
-  //   ];
-  // }
+  onSearch(event: Event) {
+    this.data.skip = 0;
+    this.searchFieldsKey.forEach((key) => {
+      this.data.filters.addOrODataFilter(
+        `substringof('${(event.target as HTMLInputElement).value}', ${key})`
+      );
+    });
+    this.loadItems();
+  }
+
+  loadFilterConfig() {
+    this.filterConfig.filters = [
+      MCFilter.text({
+        title: 'Name',
+        key: 'name',
+      }),
+      MCFilter.text({
+        title: 'Description',
+        key: 'description',
+      }),
+      MCFilter.multiselect({
+        title: 'Type',
+        key: 'type',
+        options: SPACE_TYPES,
+      }),
+    ];
+  }
 
   handleEdit(row: Space) {
-    console.log(row);
-  }
-
-  handleDelete(row: Space) {
     console.log(row);
   }
 }

@@ -11,7 +11,7 @@ type ToastType = 'info' | 'warn' | 'danger' | 'success';
 @Injectable({
   providedIn: 'root',
 })
-export class Toast {
+export class ToastService {
   private messageService = inject(MessageService);
 
   showInfo(title: string, text: string) {

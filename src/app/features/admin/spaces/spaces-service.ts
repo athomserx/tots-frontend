@@ -23,13 +23,32 @@ export class SpacesService implements MCApiRestHttpService<Space> {
   }
 
   list(queryParams?: string): Observable<MCListResponse<Space>> {
+    console.log('queryParams', queryParams);
     return of({
       data: [
-        { id: 1, name: 'Space 1', type: 'Type 1', description: 'Description 1', pricePerHour: 1, capacity: 1, createdAt: '2026-01-01', updatedAt: '2026-01-01' },
-        { id: 2, name: 'Space 2', type: 'Type 2', description: 'Description 2', pricePerHour: 2, capacity: 2, createdAt: '2026-01-01', updatedAt: '2026-01-01' },
+        {
+          id: 1,
+          name: 'Space 1',
+          type: 'Type 1',
+          description: 'Description 1',
+          pricePerHour: 1,
+          capacity: 1,
+          createdAt: '2026-01-01',
+          updatedAt: '2026-01-01',
+        },
+        {
+          id: 2,
+          name: 'Space 2',
+          type: 'Type 2',
+          description: 'Description 2',
+          pricePerHour: 2,
+          capacity: 2,
+          createdAt: '2026-01-01',
+          updatedAt: '2026-01-01',
+        },
       ],
-      total: 2
-    })
+      total: 2,
+    });
     // return this.http.get<MCListResponse<Space>>(this.baseUrl + queryParams);
   }
 
@@ -42,8 +61,8 @@ export class SpacesService implements MCApiRestHttpService<Space> {
       pricePerHour: 1,
       capacity: 1,
       createdAt: '2026-01-01',
-      updatedAt: '2026-01-01'
-    })
+      updatedAt: '2026-01-01',
+    });
     // return this.http.get<Space>(`${this.baseUrl}/${id}`);
   }
 
@@ -53,6 +72,7 @@ export class SpacesService implements MCApiRestHttpService<Space> {
   }
 
   delete(id: string): Observable<void> {
+    console.log('remove id', id);
     return of(undefined);
     // return this.http.delete(`${this.baseUrl}/${id}`);
   }

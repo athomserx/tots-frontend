@@ -1,4 +1,4 @@
-import { Route, Routes } from '@angular/router';
+import { Route } from '@angular/router';
 
 import { authRoutes } from '@core/auth/auth.routes';
 import { authGuard } from '@core/auth/guards/auth-guard';
@@ -26,22 +26,19 @@ export const routes: AppRoutes = [
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
       {
         path: 'dashboard',
-        loadComponent: () =>
-          import('@features/client/explore/explore').then((m) => m.Explore),
+        loadComponent: () => import('@features/client/explore/explore').then((m) => m.Explore),
         canMatch: [roleGuard],
         data: { roles: [UserRole.CLIENT] },
       },
       {
         path: 'dashboard',
-        loadComponent: () =>
-          import('@features/admin/spaces/spaces').then((m) => m.Spaces),
+        loadComponent: () => import('@features/admin/spaces/spaces').then((m) => m.Spaces),
         canMatch: [roleGuard],
         data: { roles: [UserRole.ADMIN] },
       },
       {
         path: 'bookings',
-        loadComponent: () =>
-          import('@features/client/bookings/bookings').then((m) => m.Bookings),
+        loadComponent: () => import('@features/client/bookings/bookings').then((m) => m.Bookings),
         canMatch: [roleGuard],
         data: { roles: [UserRole.CLIENT] },
       },
