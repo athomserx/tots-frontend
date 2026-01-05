@@ -1,7 +1,7 @@
 import { computed, inject, Injectable, PLATFORM_ID, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { API_URL } from '@core/config/api-token';
+import { API_URL } from '@core/api/api-token';
 import { tap } from 'rxjs';
 import { STORAGE_KEYS } from '@core/auth/auth-constants';
 import { AuthResponse, LoginPayload, RegisterPayload, User } from './auth-types';

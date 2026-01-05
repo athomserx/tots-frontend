@@ -1,9 +1,16 @@
-<mc-table [columns]="tableColumns" [response]="tableResponse" [paginator]="true">
-  <ng-template mcThTemplate="game_number">
-    <h2>Game Test Head # <p-button label="send" /></h2>
-  </ng-template>
-
-  <ng-template mcTdTemplate="status" let-row>
-    <p-button label="Change status" /> {{ row.status }}
-  </ng-template>
-</mc-table>
+<div class="flex flex-col gap-4">
+  <header class="flex justify-between">
+    <h1 class="text-2xl font-extrabold">Spaces</h1>
+    <p-button label="Add space" severity="contrast" />
+  </header>
+  <section>
+    <mc-table [columns]="columns" [response]="items" [paginator]="true">
+      <ng-template mcTdTemplate="actions" let-row>
+        <div class="flex gap-2">
+          <p-button label="" icon="pi pi-pencil" severity="contrast" (onClick)="handleEdit(row)" />
+          <p-button label="" icon="pi pi-trash" severity="danger" (onClick)="handleDelete(row)" />
+        </div>
+      </ng-template>
+    </mc-table>
+  </section>
+</div>

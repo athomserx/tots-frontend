@@ -5,17 +5,17 @@ import {
 } from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { provideClientHydration, withEventReplay } from '@angular/platform-browser';
-import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { provideHttpClient, withFetch, withInterceptors } from '@angular/common/http';
 
 import Aura from '@primeng/themes/aura';
 import { providePrimeNG } from 'primeng/config';
-import { MessageService } from 'primeng/api';
+import { ConfirmationService, MessageService } from 'primeng/api';
 
 import { environment } from '@/environments/environment';
-import { API_URL } from '@core/config/api-token';
+import { API_URL } from '@core/api/api-token';
 import { authInterceptor } from '@core/auth/auth-interceptor';
 import { routes } from './app.routes';
+import { caseTransformInterceptor } from '@core/api/case-transform-interceptor';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -23,8 +23,7 @@ export const appConfig: ApplicationConfig = {
     provideZonelessChangeDetection(),
     provideRouter(routes),
     provideClientHydration(withEventReplay()),
-    provideAnimationsAsync(),
-    provideHttpClient(withFetch(), withInterceptors([authInterceptor])),
+    provideHttpClient(withFetch(), withInterceptors([authInterceptor, caseTransformInterceptor])),
     { provide: API_URL, useValue: environment.apiUrl },
     providePrimeNG({
       theme: {
@@ -37,5 +36,6 @@ export const appConfig: ApplicationConfig = {
       },
     }),
     MessageService,
+    ConfirmationService,
   ],
 };
