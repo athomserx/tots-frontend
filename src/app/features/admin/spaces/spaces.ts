@@ -1,4 +1,6 @@
 import { Component, inject, OnInit, viewChild } from '@angular/core';
+import { Subject } from 'rxjs';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 
 import { ButtonModule } from 'primeng/button';
 import { IconFieldModule } from 'primeng/iconfield';
@@ -21,6 +23,7 @@ import { MCColumn } from '@mckit/core';
 import { Space } from './space-types';
 import { SpacesService } from './spaces-service';
 import { SPACE_TYPES } from '@core/models/space-description-model';
+import { TablePageEvent } from 'primeng/table';
 
 @Component({
   selector: 'tots-spaces',
@@ -45,6 +48,7 @@ export class Spaces extends MCOdataTableComponent<Space> implements OnInit {
 
   override tableKey = 'admin-spaces-table';
   filterConfig = new MCConfigFilter();
+  search$ = new Subject<string>();
 
   override columns: Array<MCColumn> = [
     { field: 'id', title: 'ID', isShow: true },
@@ -65,6 +69,17 @@ export class Spaces extends MCOdataTableComponent<Space> implements OnInit {
     this.data.orderBy = 'createdAt desc';
     super.ngOnInit();
     this.loadFilterConfig();
+    this.initSearchConfig();
+  }
+
+  initSearchConfig() {
+    this.search$.pipe(debounceTime(300), distinctUntilChanged()).subscribe((value) => {
+      this.data.skip = 0;
+      this.searchFieldsKey.forEach((key) => {
+        this.data.filters.addOrODataFilter(`substringof('${value}', ${key})`);
+      });
+      this.loadItems();
+    });
   }
 
   onFilter(filters: Array<MCResultFilter>) {
@@ -73,16 +88,16 @@ export class Spaces extends MCOdataTableComponent<Space> implements OnInit {
     this.data.filters.setPostpend(filterOdata);
     this.data.skip = 0;
     this.loadItems();
-    console.log('filters', filters);
   }
 
   onSearch(event: Event) {
-    this.data.skip = 0;
-    this.searchFieldsKey.forEach((key) => {
-      this.data.filters.addOrODataFilter(
-        `substringof('${(event.target as HTMLInputElement).value}', ${key})`
-      );
-    });
+    const value = (event.target as HTMLInputElement).value;
+    this.search$.next(value);
+  }
+
+  onPageChange(event: TablePageEvent) {
+    this.data.skip = event.first;
+    this.data.top = event.rows;
     this.loadItems();
   }
 

@@ -47,7 +47,7 @@ export class SpacesService implements MCApiRestHttpService<Space> {
           updatedAt: '2026-01-01',
         },
       ],
-      total: 2,
+      total: 50,
     });
     // return this.http.get<MCListResponse<Space>>(this.baseUrl + queryParams);
   }

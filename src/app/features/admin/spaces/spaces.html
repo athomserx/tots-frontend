@@ -27,7 +27,12 @@
     <p-button label="Add space" severity="contrast" />
   </header>
   <section>
-    <mc-table [columns]="columns" [response]="items" [paginator]="true">
+    <mc-table
+      [columns]="columns"
+      [response]="items"
+      [paginator]="true"
+      (onPage)="onPageChange($event)"
+    >
       <ng-template mcTdTemplate="actions" let-row>
         <div class="flex gap-2">
           <p-button
