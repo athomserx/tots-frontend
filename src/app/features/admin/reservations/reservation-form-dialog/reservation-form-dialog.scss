@@ -1,0 +1,21 @@
+:host {
+  ::ng-deep {
+    .p-dialog {
+      .p-dialog-header {
+        padding: 1.5rem;
+        border-bottom: 1px solid #e5e7eb;
+      }
+
+      .p-dialog-content {
+        padding: 1.5rem;
+      }
+    }
+
+    .p-select,
+    .p-datepicker {
+      &.ng-invalid.ng-touched {
+        border-color: #ef4444;
+      }
+    }
+  }
+}

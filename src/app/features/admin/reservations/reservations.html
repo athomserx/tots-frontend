@@ -1,1 +1,143 @@
-<p>reservations works!</p>
+<div class="flex flex-col gap-4">
+  <header class="flex justify-between items-start">
+    <h1 class="text-2xl font-extrabold">Reservations</h1>
+
+    <div class="flex flex-col gap-2">
+      <div class="flex gap-2">
+        <!-- Filter by Space -->
+        <p-select
+          [options]="spaces()"
+          [(ngModel)]="selectedSpaceId"
+          (onChange)="onSpaceFilterChange($event.value)"
+          optionLabel="name"
+          optionValue="id"
+          placeholder="Filter by Space"
+          [showClear]="true"
+          class="w-48"
+        />
+
+        <!-- Filter by Space Type -->
+        <p-select
+          [options]="spaceTypes"
+          [(ngModel)]="selectedSpaceType"
+          (onChange)="onSpaceTypeFilterChange($event.value)"
+          optionLabel="label"
+          optionValue="value"
+          placeholder="Filter by Type"
+          [showClear]="true"
+          class="w-48"
+        />
+
+        <p-button
+          label="Clear Filters"
+          icon="pi pi-filter-slash"
+          (onClick)="clearFilters()"
+          severity="secondary"
+          [text]="true"
+        />
+
+        <p-button label="Refresh" icon="pi pi-refresh" (onClick)="loadReservations()" />
+      </div>
+
+      <div class="flex justify-end">
+        <p-button label="Add Reservation" severity="contrast" (onClick)="openAddDialog()" />
+      </div>
+    </div>
+  </header>
+
+  <section>
+    @if (isLoading()) {
+    <div class="flex justify-center items-center p-8">
+      <i class="pi pi-spin pi-spinner text-4xl text-gray-500"></i>
+    </div>
+    } @else if (filteredReservations().length === 0) {
+    <div class="text-center p-8 text-gray-500">
+      <i class="pi pi-calendar text-6xl mb-4 block"></i>
+      <p class="text-lg">No reservations found</p>
+      <p class="text-sm">Try adjusting your filters or create a new reservation</p>
+    </div>
+    } @else {
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      @for (reservation of filteredReservations(); track reservation.id) {
+      <p-card class="reservation-card">
+        <ng-template #header>
+          <div class="card-header p-4 bg-gray-50 border-b">
+            <div class="flex justify-between items-start">
+              <div>
+                <h3 class="font-bold text-lg text-gray-900">
+                  {{ getSpaceName(reservation.spaceId) }}
+                </h3>
+                <span
+                  class="badge mt-2"
+                  [ngClass]="getReservationTypeBadgeClass(reservation.type)"
+                >
+                  {{ getReservationTypeLabel(reservation.type) }}
+                </span>
+              </div>
+              <div class="flex gap-1">
+                <p-button
+                  icon="pi pi-pencil"
+                  [rounded]="true"
+                  [text]="true"
+                  severity="contrast"
+                  (onClick)="handleEdit(reservation.id)"
+                />
+                <p-button
+                  icon="pi pi-trash"
+                  [rounded]="true"
+                  [text]="true"
+                  severity="danger"
+                  (onClick)="onRemoveConfirm(reservation.id)"
+                />
+              </div>
+            </div>
+          </div>
+        </ng-template>
+
+        <div class="card-content space-y-3">
+          <div class="flex items-start gap-2">
+            <i class="pi pi-calendar text-gray-600 mt-1"></i>
+            <div class="flex-1">
+              <p class="text-sm font-semibold text-gray-700">Start</p>
+              <p class="text-sm text-gray-600">{{ formatDateTime(reservation.start) }}</p>
+            </div>
+          </div>
+
+          <div class="flex items-start gap-2">
+            <i class="pi pi-calendar-times text-gray-600 mt-1"></i>
+            <div class="flex-1">
+              <p class="text-sm font-semibold text-gray-700">End</p>
+              <p class="text-sm text-gray-600">{{ formatDateTime(reservation.end) }}</p>
+            </div>
+          </div>
+
+          <div class="flex items-start gap-2">
+            <i class="pi pi-user text-gray-600 mt-1"></i>
+            <div class="flex-1">
+              <p class="text-sm font-semibold text-gray-700">User ID</p>
+              <p class="text-sm text-gray-600">{{ reservation.userId }}</p>
+            </div>
+          </div>
+
+          <div class="text-xs text-gray-500 pt-2 border-t">
+            <p>Created: {{ formatDateTime(reservation.createdAt) }}</p>
+            <p>Updated: {{ formatDateTime(reservation.updatedAt) }}</p>
+          </div>
+        </div>
+      </p-card>
+      }
+    </div>
+    }
+  </section>
+</div>
+
+<p-toast></p-toast>
+<p-confirmDialog></p-confirmDialog>
+
+<tots-reservation-form-dialog
+  [visible]="showDialog()"
+  [reservation]="selectedReservation()"
+  [mode]="dialogMode()"
+  (onClose)="handleCloseDialog()"
+  (onSave)="handleSaveReservation($event)"
+/>

@@ -1,0 +1,108 @@
+<p-dialog
+  [header]="dialogTitle"
+  [visible]="visible()"
+  [modal]="true"
+  [style]="{ width: '500px' }"
+  [draggable]="false"
+  [resizable]="false"
+  (onHide)="handleClose()"
+>
+  <form [formGroup]="reservationForm" (ngSubmit)="handleSubmit()" class="space-y-4">
+    <!-- Space Field -->
+    <div class="flex flex-col gap-2">
+      <label for="spaceId" class="font-semibold text-sm">Space</label>
+      <p-select
+        id="spaceId"
+        formControlName="spaceId"
+        [options]="spaces()"
+        optionLabel="name"
+        optionValue="id"
+        placeholder="Select a space"
+        class="w-full"
+        [class.ng-invalid]="
+          reservationForm.get('spaceId')?.invalid && reservationForm.get('spaceId')?.touched
+        "
+      />
+      @if (getErrorMessage('spaceId')) {
+      <small class="text-red-500">{{ getErrorMessage('spaceId') }}</small>
+      }
+    </div>
+
+    <!-- Type Field -->
+    <div class="flex flex-col gap-2">
+      <label for="type" class="font-semibold text-sm">Reservation Type</label>
+      <p-select
+        id="type"
+        formControlName="type"
+        [options]="reservationTypes"
+        optionLabel="label"
+        optionValue="value"
+        placeholder="Select reservation type"
+        class="w-full"
+        [class.ng-invalid]="
+          reservationForm.get('type')?.invalid && reservationForm.get('type')?.touched
+        "
+      />
+      @if (getErrorMessage('type')) {
+      <small class="text-red-500">{{ getErrorMessage('type') }}</small>
+      }
+    </div>
+
+    <!-- Start Date/Time Field -->
+    <div class="flex flex-col gap-2">
+      <label for="start" class="font-semibold text-sm">Start Date & Time</label>
+      <p-datepicker
+        id="start"
+        formControlName="start"
+        [showTime]="true"
+        [showIcon]="true"
+        placeholder="Select start date and time"
+        dateFormat="yy-mm-dd"
+        class="w-full"
+        [class.ng-invalid]="
+          reservationForm.get('start')?.invalid && reservationForm.get('start')?.touched
+        "
+      />
+      @if (getErrorMessage('start')) {
+      <small class="text-red-500">{{ getErrorMessage('start') }}</small>
+      }
+    </div>
+
+    <!-- End Date/Time Field -->
+    <div class="flex flex-col gap-2">
+      <label for="end" class="font-semibold text-sm">End Date & Time</label>
+      <p-datepicker
+        id="end"
+        formControlName="end"
+        [showTime]="true"
+        [showIcon]="true"
+        placeholder="Select end date and time"
+        dateFormat="yy-mm-dd"
+        class="w-full"
+        [class.ng-invalid]="
+          reservationForm.get('end')?.invalid && reservationForm.get('end')?.touched
+        "
+      />
+      @if (getErrorMessage('end')) {
+      <small class="text-red-500">{{ getErrorMessage('end') }}</small>
+      }
+    </div>
+
+    <!-- Dialog Footer Actions -->
+    <div class="flex justify-end gap-2 pt-4">
+      <p-button
+        label="Cancel"
+        severity="secondary"
+        [text]="true"
+        (onClick)="handleClose()"
+        type="button"
+      />
+      <p-button
+        [label]="submitButtonLabel"
+        severity="contrast"
+        [disabled]="reservationForm.invalid"
+        type="submit"
+      />
+    </div>
+  </form>
+</p-dialog>
