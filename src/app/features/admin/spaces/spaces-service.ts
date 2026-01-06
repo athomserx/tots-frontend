@@ -22,7 +22,12 @@ export class SpacesService implements MCApiRestHttpService<Space> {
   }
 
   list(queryParams?: string): Observable<MCListResponse<Space>> {
-    const url = queryParams ? `${this.baseUrl}${queryParams}` : this.baseUrl;
+    if (!queryParams) {
+      return this.http.get<MCListResponse<Space>>(this.baseUrl);
+    }
+
+    const separator = queryParams.startsWith('?') ? '' : '?';
+    const url = `${this.baseUrl}${separator}${queryParams}`;
     return this.http.get<MCListResponse<Space>>(url);
   }
 

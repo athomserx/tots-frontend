@@ -24,7 +24,12 @@ export class ReservationsService {
   }
 
   list(queryParams?: string): Observable<ReservationListResponse> {
-    const url = queryParams ? `${this.baseUrl}${queryParams}` : this.baseUrl;
+    if (!queryParams) {
+      return this.http.get<ReservationListResponse>(this.baseUrl);
+    }
+
+    const separator = queryParams.startsWith('?') ? '' : '?';
+    const url = `${this.baseUrl}${separator}${queryParams}`;
     return this.http.get<ReservationListResponse>(url);
   }
 
