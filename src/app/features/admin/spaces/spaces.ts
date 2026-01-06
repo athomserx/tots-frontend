@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, viewChild } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 
@@ -24,6 +24,8 @@ import { Space } from './space-types';
 import { SpacesService } from './spaces-service';
 import { SPACE_TYPES } from '@core/models/space-description-model';
 import { TablePageEvent } from 'primeng/table';
+import { SpaceFormDialog } from './space-form-dialog/space-form-dialog';
+import { ToastService } from '@shared/ui/toast/toast';
 
 @Component({
   selector: 'tots-spaces',
@@ -37,6 +39,7 @@ import { TablePageEvent } from 'primeng/table';
     IconFieldModule,
     InputTextModule,
     InputIconModule,
+    SpaceFormDialog,
   ],
   providers: [MessageService, ConfirmationService],
   templateUrl: './spaces.html',
@@ -45,10 +48,16 @@ import { TablePageEvent } from 'primeng/table';
 export class Spaces extends MCOdataTableComponent<Space> implements OnInit {
   override httpService = inject(SpacesService);
   private odataConverter = inject(MCFilterOdataConverterService);
+  private toastService = inject(ToastService);
+  confirmService = inject(ConfirmationService);
 
   override tableKey = 'admin-spaces-table';
   filterConfig = new MCConfigFilter();
   search$ = new Subject<string>();
+
+  showDialog = signal(false);
+  dialogMode = signal<'add' | 'edit'>('add');
+  selectedSpace = signal<Space | null>(null);
 
   override columns: Array<MCColumn> = [
     { field: 'id', title: 'ID', isShow: true },
@@ -119,7 +128,81 @@ export class Spaces extends MCOdataTableComponent<Space> implements OnInit {
     ];
   }
 
-  handleEdit(row: Space) {
-    console.log(row);
+  openAddDialog() {
+    this.dialogMode.set('add');
+    this.selectedSpace.set(null);
+    this.showDialog.set(true);
+  }
+
+  handleEdit(spaceId: number) {
+    this.httpService.get(spaceId.toString()).subscribe({
+      next: (space) => {
+        this.selectedSpace.set(space);
+        this.dialogMode.set('edit');
+        this.showDialog.set(true);
+      },
+      error: (err) => {
+        console.error('Error fetching space:', err);
+        this.toastService.showError('Error', 'Failed to load space details');
+      },
+    });
+  }
+
+  handleCloseDialog() {
+    this.showDialog.set(false);
+    this.selectedSpace.set(null);
+  }
+
+  handleSaveSpace(spaceData: Partial<Space>) {
+    if (this.dialogMode() === 'add') {
+      this.httpService.create(spaceData as Space).subscribe({
+        next: () => {
+          this.toastService.showSuccess('Success', 'Space created successfully');
+          this.handleCloseDialog();
+          this.loadItems();
+        },
+        error: (err) => {
+          console.error('Error creating space:', err);
+          this.toastService.showError('Error', 'Failed to create space');
+        },
+      });
+    } else {
+      this.httpService.update(spaceData as Space).subscribe({
+        next: () => {
+          this.toastService.showSuccess('Success', 'Space updated successfully');
+          this.handleCloseDialog();
+          this.loadItems();
+        },
+        error: (err) => {
+          console.error('Error updating space:', err);
+          this.toastService.showError('Error', 'Failed to update space');
+        },
+      });
+    }
+  }
+
+  override onRemoveConfirm(spaceId: number) {
+    this.confirmService.confirm({
+      message: 'Are you sure you want to delete this space?',
+      header: 'Confirm Deletion',
+      icon: 'pi pi-exclamation-triangle',
+      acceptButtonStyleClass: 'p-button-danger',
+      accept: () => {
+        this.handleDelete(spaceId);
+      },
+    });
+  }
+
+  private handleDelete(spaceId: number) {
+    this.httpService.delete(spaceId.toString()).subscribe({
+      next: () => {
+        this.toastService.showSuccess('Success', 'Space deleted successfully');
+        this.loadItems();
+      },
+      error: (err) => {
+        console.error('Error deleting space:', err);
+        this.toastService.showError('Error', 'Failed to delete space');
+      },
+    });
   }
 }

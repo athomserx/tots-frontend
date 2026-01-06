@@ -1,0 +1,23 @@
+:host {
+  ::ng-deep {
+    .p-dialog {
+      .p-dialog-header {
+        padding: 1.5rem;
+        border-bottom: 1px solid #e5e7eb;
+      }
+
+      .p-dialog-content {
+        padding: 1.5rem;
+      }
+    }
+
+    .p-inputtext,
+    textarea,
+    .p-inputnumber,
+    .p-select {
+      &.ng-invalid.ng-touched {
+        border-color: #ef4444;
+      }
+    }
+  }
+}

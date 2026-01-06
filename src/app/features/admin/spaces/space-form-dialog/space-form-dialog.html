@@ -1,0 +1,117 @@
+<p-dialog
+  [header]="dialogTitle"
+  [visible]="visible()"
+  [modal]="true"
+  [style]="{ width: '500px' }"
+  [draggable]="false"
+  [resizable]="false"
+  (onHide)="handleClose()"
+>
+  <form [formGroup]="spaceForm" (ngSubmit)="handleSubmit()" class="space-y-4">
+    <div class="flex flex-col gap-2">
+      <label for="name" class="font-semibold text-sm">Name</label>
+      <input
+        id="name"
+        type="text"
+        pInputText
+        formControlName="name"
+        placeholder="Enter space name"
+        class="w-full"
+        [class.ng-invalid]="spaceForm.get('name')?.invalid && spaceForm.get('name')?.touched"
+      />
+      @if (getErrorMessage('name')) {
+      <small class="text-red-500">{{ getErrorMessage('name') }}</small>
+      }
+    </div>
+
+    <div class="flex flex-col gap-2">
+      <label for="type" class="font-semibold text-sm">Type</label>
+      <p-select
+        id="type"
+        formControlName="type"
+        [options]="spaceTypes"
+        optionLabel="label"
+        optionValue="value"
+        placeholder="Select space type"
+        class="w-full"
+        [class.ng-invalid]="spaceForm.get('type')?.invalid && spaceForm.get('type')?.touched"
+      />
+      @if (getErrorMessage('type')) {
+      <small class="text-red-500">{{ getErrorMessage('type') }}</small>
+      }
+    </div>
+
+    <div class="flex flex-col gap-2">
+      <label for="description" class="font-semibold text-sm">Description</label>
+      <textarea
+        id="description"
+        pTextarea
+        formControlName="description"
+        placeholder="Enter space description"
+        rows="4"
+        class="w-full"
+        [class.ng-invalid]="
+          spaceForm.get('description')?.invalid && spaceForm.get('description')?.touched
+        "
+      ></textarea>
+      @if (getErrorMessage('description')) {
+      <small class="text-red-500">{{ getErrorMessage('description') }}</small>
+      }
+    </div>
+
+    <div class="flex flex-col gap-2">
+      <label for="pricePerHour" class="font-semibold text-sm">Price per Hour ($)</label>
+      <p-inputnumber
+        id="pricePerHour"
+        formControlName="pricePerHour"
+        mode="currency"
+        currency="USD"
+        locale="en-US"
+        placeholder="0.00"
+        [min]="0"
+        [minFractionDigits]="2"
+        class="w-full"
+        [class.ng-invalid]="
+          spaceForm.get('pricePerHour')?.invalid && spaceForm.get('pricePerHour')?.touched
+        "
+      />
+      @if (getErrorMessage('pricePerHour')) {
+      <small class="text-red-500">{{ getErrorMessage('pricePerHour') }}</small>
+      }
+    </div>
+
+    <div class="flex flex-col gap-2">
+      <label for="capacity" class="font-semibold text-sm">Capacity</label>
+      <p-inputnumber
+        id="capacity"
+        formControlName="capacity"
+        placeholder="Enter capacity"
+        [min]="1"
+        [showButtons]="true"
+        class="w-full"
+        [class.ng-invalid]="
+          spaceForm.get('capacity')?.invalid && spaceForm.get('capacity')?.touched
+        "
+      />
+      @if (getErrorMessage('capacity')) {
+      <small class="text-red-500">{{ getErrorMessage('capacity') }}</small>
+      }
+    </div>
+
+    <div class="flex justify-end gap-2 pt-4">
+      <p-button
+        label="Cancel"
+        severity="secondary"
+        [text]="true"
+        (onClick)="handleClose()"
+        type="button"
+      />
+      <p-button
+        [label]="submitButtonLabel"
+        severity="contrast"
+        [disabled]="spaceForm.invalid"
+        type="submit"
+      />
+    </div>
+  </form>
+</p-dialog>

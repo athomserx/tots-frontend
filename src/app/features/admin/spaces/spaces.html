@@ -24,7 +24,7 @@
 
       <p-button label="Refresh" icon="pi pi-refresh" (onClick)="loadItems()" styleClass="ml-2" />
     </div>
-    <p-button label="Add space" severity="contrast" />
+    <p-button label="Add space" severity="contrast" (onClick)="openAddDialog()" />
   </header>
   <section>
     <mc-table
@@ -55,3 +55,11 @@
 
 <p-toast></p-toast>
 <p-confirmDialog></p-confirmDialog>
+
+<tots-space-form-dialog
+  [visible]="showDialog()"
+  [space]="selectedSpace()"
+  [mode]="dialogMode()"
+  (onClose)="handleCloseDialog()"
+  (onSave)="handleSaveSpace($event)"
+/>
