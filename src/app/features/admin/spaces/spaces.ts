@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, inject, OnInit, signal, ChangeDetectorRef, AfterViewInit } from '@angular/core';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 
@@ -45,11 +45,13 @@ import { ToastService } from '@shared/ui/toast/toast';
   templateUrl: './spaces.html',
   styleUrl: './spaces.scss',
 })
-export class Spaces extends MCOdataTableComponent<Space> implements OnInit {
+export class Spaces extends MCOdataTableComponent<Space> implements OnInit, AfterViewInit {
   override httpService = inject(SpacesService);
   private odataConverter = inject(MCFilterOdataConverterService);
   private toastService = inject(ToastService);
   confirmService = inject(ConfirmationService);
+
+  private cdr = inject(ChangeDetectorRef);
 
   override tableKey = 'admin-spaces-table';
   filterConfig = new MCConfigFilter();
@@ -79,6 +81,12 @@ export class Spaces extends MCOdataTableComponent<Space> implements OnInit {
     super.ngOnInit();
     this.loadFilterConfig();
     this.initSearchConfig();
+
+    this.cdr.detectChanges();
+  }
+
+  ngAfterViewInit() {
+    this.loadItems();
   }
 
   initSearchConfig() {
@@ -204,5 +212,16 @@ export class Spaces extends MCOdataTableComponent<Space> implements OnInit {
         this.toastService.showError('Error', 'Failed to delete space');
       },
     });
+  }
+
+  formatDate(dateString: string): string {
+    if (!dateString) return '';
+    const date = new Date(dateString);
+    const day = date.getDate().toString().padStart(2, '0');
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const year = date.getFullYear();
+    const hours = date.getHours().toString().padStart(2, '0');
+    const minutes = date.getMinutes().toString().padStart(2, '0');
+    return `${day}-${month}-${year} ${hours}:${minutes}`;
   }
 }

@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 
 import { Reservation } from './reservation-types';
 import { API_URL } from '@core/api/api-token';
+import { buildUrlWithParams } from '@core/api/api-utils';
 
 export interface ReservationListResponse {
   data: Reservation[];
@@ -24,12 +25,7 @@ export class ReservationsService {
   }
 
   list(queryParams?: string): Observable<ReservationListResponse> {
-    if (!queryParams) {
-      return this.http.get<ReservationListResponse>(this.baseUrl);
-    }
-
-    const separator = queryParams.startsWith('?') ? '' : '?';
-    const url = `${this.baseUrl}${separator}${queryParams}`;
+    const url = buildUrlWithParams(this.baseUrl, queryParams);
     return this.http.get<ReservationListResponse>(url);
   }
 

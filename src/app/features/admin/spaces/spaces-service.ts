@@ -6,6 +6,7 @@ import { MCApiRestHttpService, MCListResponse } from '@mckit/core';
 
 import { Space } from './space-types';
 import { API_URL } from '@core/api/api-token';
+import { buildUrlWithParams } from '@core/api/api-utils';
 
 @Injectable({
   providedIn: 'root',
@@ -22,12 +23,7 @@ export class SpacesService implements MCApiRestHttpService<Space> {
   }
 
   list(queryParams?: string): Observable<MCListResponse<Space>> {
-    if (!queryParams) {
-      return this.http.get<MCListResponse<Space>>(this.baseUrl);
-    }
-
-    const separator = queryParams.startsWith('?') ? '' : '?';
-    const url = `${this.baseUrl}${separator}${queryParams}`;
+    const url = buildUrlWithParams(this.baseUrl, queryParams);
     return this.http.get<MCListResponse<Space>>(url);
   }
 

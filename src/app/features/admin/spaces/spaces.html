@@ -33,6 +33,14 @@
       [paginator]="true"
       (onPage)="onPageChange($event)"
     >
+      <ng-template mcTdTemplate="createdAt" let-row>
+        {{ formatDate(row.createdAt) }}
+      </ng-template>
+
+      <ng-template mcTdTemplate="updatedAt" let-row>
+        {{ formatDate(row.updatedAt) }}
+      </ng-template>
+
       <ng-template mcTdTemplate="actions" let-row>
         <div class="flex gap-2">
           <p-button
