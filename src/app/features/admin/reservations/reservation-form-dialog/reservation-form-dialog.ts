@@ -5,9 +5,9 @@ import { ButtonModule } from 'primeng/button';
 import { Select } from 'primeng/select';
 import { DatePicker } from 'primeng/datepicker';
 
-import { Reservation, ReservationType } from '../reservation-types';
-import { SpacesService } from '../../spaces/spaces-service';
-import { Space } from '../../spaces/space-types';
+import { Reservation, ReservationType } from '@features/admin/reservations/reservation-types';
+import { SpacesService } from '@features/admin/spaces/spaces-service';
+import { Space } from '@features/admin/spaces/space-types';
 
 @Component({
   selector: 'tots-reservation-form-dialog',

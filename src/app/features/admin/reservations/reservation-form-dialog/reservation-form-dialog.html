@@ -58,6 +58,7 @@
         [showIcon]="true"
         placeholder="Select start date and time"
         dateFormat="yy-mm-dd"
+        appendTo="body"
         class="w-full"
         [class.ng-invalid]="
           reservationForm.get('start')?.invalid && reservationForm.get('start')?.touched
@@ -78,6 +79,7 @@
         [showIcon]="true"
         placeholder="Select end date and time"
         dateFormat="yy-mm-dd"
+        appendTo="body"
         class="w-full"
         [class.ng-invalid]="
           reservationForm.get('end')?.invalid && reservationForm.get('end')?.touched
