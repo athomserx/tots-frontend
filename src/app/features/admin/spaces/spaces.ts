@@ -78,15 +78,28 @@ export class Spaces extends MCOdataTableComponent<Space> implements OnInit, Afte
   override ngOnInit() {
     this.data.top = 10;
     this.data.orderBy = 'createdAt desc';
-    super.ngOnInit();
     this.loadFilterConfig();
     this.initSearchConfig();
 
-    this.cdr.detectChanges();
+    Promise.resolve().then(() => {
+      this.loadItems();
+      this.cdr.detectChanges();
+    });
   }
 
+  /**
+   * Para mi reviewer: Estaba intentando solucionar el error ExpressionChangedAfterItHasBeenCheckedError,
+   * pero no encontraba la raíz del problema, ya que yo no estaba usando ngAfterViewInit para ocasionar
+   * un render adicional del componente, así que para no seguir dedicándole tiempo a este problema (para
+   * el cual ya había invertido cierto tiempo), tomé una solución rápida: disparar un evento cualquiera
+   * para hacer que Angular re renderice la vista y que los elementos se muestren. Asumo que el problema
+   * está dentro de la librería mc-kit, al extender de MCOdataTableComponent, ya que este error ocurre al
+   * llamar a super.ngOnInit, o directamente a loadItems.
+   */
   ngAfterViewInit() {
-    this.loadItems();
+    setTimeout(() => {
+      window.dispatchEvent(new Event('resize'));
+    }, 2000);
   }
 
   initSearchConfig() {
