@@ -1,1 +1,118 @@
-<p>explore works!</p>
+<div class="flex flex-col gap-4">
+  <header class="flex flex-col xl:flex-row xl:items-center justify-between gap-4 mb-6">
+    <h1 class="text-2xl font-extrabold text-gray-900">Explore Spaces</h1>
+
+    <div class="flex flex-col sm:flex-row flex-wrap gap-3">
+      <div class="flex gap-2">
+        <p-select
+          [options]="spaceTypes"
+          [(ngModel)]="selectedSpaceType"
+          (onChange)="onSpaceTypeFilterChange($event.value)"
+          optionLabel="label"
+          optionValue="value"
+          placeholder="Filter by Type"
+          [showClear]="true"
+          class="w-full sm:w-48"
+        />
+      </div>
+
+      <div class="flex gap-2 items-center">
+        <p-button
+          label="Clear"
+          icon="pi pi-filter-slash"
+          (onClick)="clearFilters()"
+          severity="secondary"
+          [text]="true"
+          pTooltip="Clear Filters"
+          tooltipPosition="bottom"
+        />
+
+        <p-button
+          icon="pi pi-refresh"
+          (onClick)="loadSpaces()"
+          severity="secondary"
+          [outlined]="true"
+          pTooltip="Refresh List"
+          tooltipPosition="bottom"
+        />
+      </div>
+    </div>
+  </header>
+
+  <section>
+    @if (isLoading()) {
+    <div class="flex justify-center items-center p-8">
+      <i class="pi pi-spin pi-spinner text-4xl text-gray-500"></i>
+    </div>
+    } @else if (filteredSpaces().length === 0) {
+    <div class="text-center p-8 text-gray-500">
+      <i class="pi pi-building text-6xl mb-4 block"></i>
+      <p class="text-lg">No spaces found</p>
+      <p class="text-sm">Try adjusting your filters</p>
+    </div>
+    } @else {
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      @for (space of filteredSpaces(); track space.id) {
+      <p-card class="space-card cursor-pointer" (click)="openReservationDialog(space)">
+        <ng-template #header>
+          <div class="card-header p-4 bg-gray-50 border-b">
+            <div class="flex justify-between items-start">
+              <div class="flex-1">
+                <h3 class="font-bold text-lg text-gray-900">
+                  {{ space.name }}
+                </h3>
+                <span class="badge mt-2">
+                  {{ getSpaceTypeLabel(space.type) }}
+                </span>
+              </div>
+              <div class="text-right">
+                <p class="text-xl font-bold text-blue-600">{{ formatPrice(space.pricePerHour) }}</p>
+              </div>
+            </div>
+          </div>
+        </ng-template>
+
+        <div class="card-content space-y-3">
+          <div class="flex items-start gap-2">
+            <i class="pi pi-align-left text-gray-600 mt-1"></i>
+            <div class="flex-1">
+              <p class="text-sm font-semibold text-gray-700">Description</p>
+              <p class="text-sm text-gray-600">{{ space.description }}</p>
+            </div>
+          </div>
+
+          <div class="flex items-start gap-2">
+            <i class="pi pi-users text-gray-600 mt-1"></i>
+            <div class="flex-1">
+              <p class="text-sm font-semibold text-gray-700">Capacity</p>
+              <p class="text-sm text-gray-600">{{ space.capacity }} people</p>
+            </div>
+          </div>
+
+          <div class="pt-3 border-t">
+            <p-button
+              label="Reserve Space"
+              icon="pi pi-calendar-plus"
+              severity="contrast"
+              class="w-full"
+              [style]="{ width: '100%' }"
+            />
+          </div>
+        </div>
+      </p-card>
+      }
+    </div>
+    }
+  </section>
+</div>
+
+<p-toast></p-toast>
+
+<tots-reservation-form-dialog
+  [visible]="showDialog()"
+  [reservation]="prefilledReservation()"
+  [mode]="'add'"
+  [isClientMode]="true"
+  (onClose)="handleCloseDialog()"
+  (onSave)="handleSaveReservation($event)"
+/>

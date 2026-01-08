@@ -28,7 +28,8 @@
       }
     </div>
 
-    <!-- Type Field -->
+    <!-- Type Field - Hidden for clients -->
+    @if (!isClientMode()) {
     <div class="flex flex-col gap-2">
       <label for="type" class="font-semibold text-sm">Reservation Type</label>
       <p-select
@@ -47,6 +48,7 @@
       <small class="text-red-500">{{ getErrorMessage('type') }}</small>
       }
     </div>
+    }
 
     <!-- Start Date/Time Field -->
     <div class="flex flex-col gap-2">
@@ -88,6 +90,19 @@
       @if (getErrorMessage('end')) {
       <small class="text-red-500">{{ getErrorMessage('end') }}</small>
       }
+    </div>
+
+    <!-- Event Name Field -->
+    <div class="flex flex-col gap-2">
+      <label for="eventName" class="font-semibold text-sm">Event Name (Optional)</label>
+      <input
+        id="eventName"
+        type="text"
+        pInputText
+        formControlName="eventName"
+        placeholder="Enter event name"
+        class="w-full"
+      />
     </div>
 
     <!-- Dialog Footer Actions -->

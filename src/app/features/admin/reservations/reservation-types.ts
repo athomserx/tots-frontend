@@ -1,11 +1,11 @@
 /**
  * Reservation type enum
  * Block type is used for blocking spaces and are created by admin
- * Client type is used for reservations that are created by client
+ * Booking type is used for reservations
  */
 export enum ReservationType {
   Block = 'block',
-  Client = 'client',
+  Booking = 'client',
 }
 
 export interface Reservation {
@@ -14,6 +14,7 @@ export interface Reservation {
   spaceId: number;
   start: string;
   end: string;
+  eventName?: string;
   type: ReservationType;
   createdAt: string;
   updatedAt: string;
