@@ -1,4 +1,4 @@
-import { Component, inject, input, output, signal, effect } from '@angular/core';
+import { Component, inject, input, output, signal, effect, untracked } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { DialogModule } from 'primeng/dialog';
 import { ButtonModule } from 'primeng/button';
@@ -48,17 +48,21 @@ export class SpaceFormDialog {
   constructor() {
     effect(() => {
       const currentSpace = this.space();
-      if (currentSpace && this.mode() === 'edit') {
-        this.spaceForm.patchValue({
-          name: currentSpace.name,
-          type: currentSpace.type,
-          description: currentSpace.description,
-          pricePerHour: currentSpace.pricePerHour,
-          capacity: currentSpace.capacity,
-        });
-      } else if (!currentSpace && this.mode() === 'add') {
-        this.spaceForm.reset();
-      }
+      const currentMode = this.mode();
+
+      untracked(() => {
+        if (currentSpace && currentMode === 'edit') {
+          this.spaceForm.patchValue({
+            name: currentSpace.name,
+            type: currentSpace.type,
+            description: currentSpace.description,
+            pricePerHour: currentSpace.pricePerHour,
+            capacity: currentSpace.capacity,
+          });
+        } else if (!currentSpace && currentMode === 'add') {
+          this.spaceForm.reset();
+        }
+      });
     });
   }
 
