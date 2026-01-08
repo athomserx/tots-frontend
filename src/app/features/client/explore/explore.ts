@@ -90,10 +90,10 @@ export class Explore implements OnInit {
   }
 
   openReservationDialog(space: Space) {
-    // this.selectedSpace.set(space);
-    // this.prefilledReservation.set({
-    //   spaceId: space.id,
-    // } as Partial<Reservation>);
+    this.selectedSpace.set(space);
+    this.prefilledReservation.set({
+      spaceId: space.id,
+    } as Partial<Reservation>);
     this.showDialog.set(true);
   }
 

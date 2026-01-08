@@ -1,4 +1,4 @@
-import { Component, inject, input, output, signal, effect, OnInit } from '@angular/core';
+import { Component, inject, input, output, signal, effect, OnInit, untracked } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { DialogModule } from 'primeng/dialog';
 import { ButtonModule } from 'primeng/button';
@@ -46,31 +46,34 @@ export class ReservationFormDialog implements OnInit {
     effect(() => {
       const currentReservation = this.reservation();
       const isClient = this.isClientMode();
+      const currentMode = this.mode();
 
-      if (currentReservation && this.mode() === 'edit') {
-        this.reservationForm.patchValue({
-          spaceId: currentReservation.spaceId,
-          type: currentReservation.type,
-          start: currentReservation.start ? new Date(currentReservation.start) : null,
-          end: currentReservation.end ? new Date(currentReservation.end) : null,
-          eventName: currentReservation.eventName || null,
-        });
-      } else if (this.mode() === 'add') {
-        // Reset form with default values
-        this.reservationForm.reset({
-          type: isClient ? ReservationType.Booking : ReservationType.Block,
-          eventName: null,
-          spaceId: null,
-          start: null,
-          end: null,
-        });
-
-        if (currentReservation) {
+      untracked(() => {
+        if (currentReservation && currentMode === 'edit') {
           this.reservationForm.patchValue({
-            spaceId: currentReservation.spaceId || null,
+            spaceId: currentReservation.spaceId,
+            type: currentReservation.type,
+            start: currentReservation.start ? new Date(currentReservation.start) : null,
+            end: currentReservation.end ? new Date(currentReservation.end) : null,
+            eventName: currentReservation.eventName || null,
           });
+        } else if (currentMode === 'add') {
+          // Reset form with default values
+          this.reservationForm.reset({
+            type: isClient ? ReservationType.Booking : ReservationType.Block,
+            eventName: null,
+            spaceId: null,
+            start: null,
+            end: null,
+          });
+
+          if (currentReservation) {
+            this.reservationForm.patchValue({
+              spaceId: currentReservation.spaceId || null,
+            });
+          }
         }
-      }
+      });
     });
   }
 
