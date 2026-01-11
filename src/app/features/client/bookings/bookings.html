@@ -132,6 +132,7 @@
 <tots-reservation-form-dialog
   [visible]="showDialog()"
   [reservation]="selectedReservation()"
+  [actionError]="actionError()"
   [mode]="'add'"
   [isClientMode]="true"
   (onClose)="handleCloseDialog()"

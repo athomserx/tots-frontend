@@ -43,6 +43,7 @@ export class Reservations implements OnInit {
   filteredReservations = signal<Reservation[]>([]);
   spaces = signal<Space[]>([]);
   isLoading = signal(false);
+  actionError = signal<string | null>(null);
 
   // Filters
   selectedSpaceId = signal<number | null>(null);
@@ -156,7 +157,8 @@ export class Reservations implements OnInit {
           this.loadReservations();
         },
         error: (err) => {
-          console.error('Error creating reservation:', err);
+          this.actionError.set(err.error.message);
+          console.log('error', err.error);
           this.toastService.showError('Error', 'Failed to create reservation');
         },
       });

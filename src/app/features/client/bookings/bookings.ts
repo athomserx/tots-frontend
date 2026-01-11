@@ -39,6 +39,7 @@ export class Bookings implements OnInit {
   private confirmationService = inject(ConfirmationService);
   private toastService = inject(ToastService);
 
+  actionError = signal<string | null>(null);
   reservations = signal<Reservation[]>([]);
   filteredReservations = signal<Reservation[]>([]);
   spaces = signal<Space[]>([]);
@@ -133,9 +134,11 @@ export class Bookings implements OnInit {
         this.toastService.showSuccess('Success', 'Reservation created successfully');
         this.handleCloseDialog();
         this.loadReservations();
+        this.actionError.set(null);
       },
       error: (err) => {
         console.error('Error creating reservation:', err);
+        this.actionError.set(err.error.message);
         this.toastService.showError('Error', 'Failed to create reservation');
       },
     });

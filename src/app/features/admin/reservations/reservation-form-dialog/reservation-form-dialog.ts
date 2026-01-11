@@ -20,6 +20,7 @@ export class ReservationFormDialog implements OnInit {
   private fb = inject(FormBuilder);
   private spacesService = inject(SpacesService);
 
+  actionError = input<string | null>(null);
   visible = input<boolean>(false);
   reservation = input<Partial<Reservation> | null>(null);
   mode = input<'add' | 'edit'>('add');
