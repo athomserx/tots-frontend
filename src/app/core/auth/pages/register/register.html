@@ -58,6 +58,9 @@
             type="password"
             class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
           />
+          @if (registerForm.get('password')?.invalid && registerForm.get('password')?.touched) {
+          <p class="text-red-500 text-xs mt-1">Password should be at least 8 characters long</p>
+          }
         </div>
         <div>
           <label class="block text-sm font-medium text-gray-700">Confirm</label>
